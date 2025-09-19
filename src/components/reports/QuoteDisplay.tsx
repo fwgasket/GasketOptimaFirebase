@@ -1,27 +1,20 @@
-import useQuoteStore from "@/store/quoteStore"
+import GasketList from "@/components/GasketList";
 
 interface QuoteDisplayProps {
   result: {
-    totalCost: number
-    totalTime: number
-  } | null
+    totalCost: number;
+    totalTime: number;
+  } | null;
+  isStale: boolean;
 }
 
-function QuoteDisplay({ result }: QuoteDisplayProps) {
-  const gaskets = useQuoteStore((state) => state.gaskets)
-
+function QuoteDisplay({ result, isStale }: QuoteDisplayProps) {
   return (
-    <div className="p-4 border rounded-md">
+    <div className={`p-4 border rounded-md ${isStale ? "opacity-50" : ""}`}>
       <h2 className="text-xl font-bold mb-4">Current Quote</h2>
       <div>
         <h3 className="text-lg font-bold">Gaskets</h3>
-        <ul>
-          {gaskets.map((gasket) => (
-            <li key={gasket.id}>
-              {gasket.quantity}x {gasket.shape === "rectangle" ? `${gasket.width}x${gasket.height}` : `${gasket.diameter}" Dia`}
-            </li>
-          ))}
-        </ul>
+        <GasketList />
       </div>
       {result && (
         <div className="mt-4">
@@ -31,7 +24,7 @@ function QuoteDisplay({ result }: QuoteDisplayProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default QuoteDisplay
+export default QuoteDisplay;

@@ -7,15 +7,14 @@ class StockedSheetStrategy implements BillingStrategy {
     if (!material.width || !material.length) {
       return 0;
     }
-
-    const sheetAreaSqFt = (material.width * material.length) / 144;
+    
     let totalConsumedSqFt = 0;
+    const sheetAreaSqFt = (material.width * material.length) / 144;
 
     for (const gasket of gaskets) {
       const yieldPerSheet = YieldService.calculate(gasket, material);
       if (yieldPerSheet > 0) {
-        const fractionalSheets = gasket.quantity / yieldPerSheet;
-        totalConsumedSqFt += fractionalSheets * sheetAreaSqFt;
+        totalConsumedSqFt += (gasket.quantity / yieldPerSheet) * sheetAreaSqFt;
       }
     }
 

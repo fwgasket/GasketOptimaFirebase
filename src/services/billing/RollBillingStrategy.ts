@@ -1,35 +1,19 @@
 import { Gasket, Material } from "@/store/quoteStore";
 import { BillingStrategy } from "./BillingStrategy";
+import YieldService from "../core/YieldService";
 
 class RollBillingStrategy implements BillingStrategy {
   calculate(gaskets: Gasket[], material: Material): number {
-    if (!material.width) {
-        return 0
-    }
-    
-    let totalLengthInches = 0;
+    let totalLength = 0;
     
     for (const gasket of gaskets) {
-        // This is a simplified calculation. The actual implementation would need to consider nesting and orientation.
-        if(gasket.shape === "rectangle" && gasket.width && gasket.height) {
-            const partsPerRow = Math.floor(material.width / (gasket.width + material.partSpacing));
-            if(partsPerRow > 0) {
-                const rows = Math.ceil(gasket.quantity / partsPerRow);
-                totalLengthInches += rows * (gasket.height + material.partSpacing);
-            }
-        } else if (gasket.shape === "circle" && gasket.diameter) {
-            const partsPerRow = Math.floor(material.width / (gasket.diameter + material.partSpacing));
-            if(partsPerRow > 0) {
-                const rows = Math.ceil(gasket.quantity / partsPerRow);
-                totalLengthInches += rows * (gasket.diameter + material.partSpacing);
-            }
-        }
+        totalLength += YieldService.calculateRollLength(gasket, material);
     }
     
-    const billedFeet = Math.ceil(totalLengthInches / 12);
-    const costPerFoot = material.cost / (material.length || 1); // Assuming cost is per total roll length
+    const billedLength = Math.ceil(totalLength / 12); // Round up to the next full foot
+    const costPerFoot = material.cost; // Assuming cost is per foot for roll material
     
-    return billedFeet * costPerFoot;
+    return billedLength * costPerFoot;
   }
 }
 

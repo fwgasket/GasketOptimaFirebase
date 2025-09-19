@@ -1,32 +1,32 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
-export interface Gasket {
-  id: number
-  quantity: number
-  shape: "rectangle" | "circle"
-  width?: number
-  height?: number
-  diameter?: number
-  innerDiameter?: number
-  boltHoles?: number
-}
+export type Gasket = {
+  id: number;
+  quantity: number;
+  shape: "rectangle" | "circle";
+  width?: number;
+  height?: number;
+  diameter?: number;
+  innerDiameter?: number;
+  boltHoles?: number;
+};
 
-export interface Material {
-  name: string
-  type: "sheet" | "roll"
-  length?: number
-  width?: number
-  cost: number
-  edgeSpacing: number
-  partSpacing: number
-  stocked: boolean
-}
+export type Material = {
+  name: string;
+  type: "sheet" | "roll";
+  length?: number;
+  width?: number;
+  cost: number;
+  edgeSpacing: number;
+  partSpacing: number;
+  stocked: boolean;
+};
 
 interface QuoteState {
-  gaskets: Gasket[]
-  material: Material
-  addGasket: (gasket: Omit<Gasket, "id">) => void
-  updateMaterial: (material: Material) => void
+  gaskets: Gasket[];
+  material: Material;
+  addGasket: (gasket: Omit<Gasket, "id">) => void;
+  updateMaterial: (material: Material) => void;
 }
 
 const useQuoteStore = create<QuoteState>((set) => ({
@@ -46,6 +46,6 @@ const useQuoteStore = create<QuoteState>((set) => ({
       gaskets: [...state.gaskets, { ...gasket, id: Date.now() }],
     })),
   updateMaterial: (material) => set({ material }),
-}))
+}));
 
-export default useQuoteStore
+export default useQuoteStore;

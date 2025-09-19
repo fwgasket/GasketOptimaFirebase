@@ -4,23 +4,18 @@ import YieldService from "../core/YieldService";
 
 class NonStockedSheetStrategy implements BillingStrategy {
   calculate(gaskets: Gasket[], material: Material): number {
-     if (!material.width || !material.length) {
-      return 0;
-    }
-
-    let totalFractionalSheets = 0;
-
+    let totalSheets = 0;
+    
+    // For simplicity, we'll use the standard aggregation for now.
+    // The remainder nesting heuristic can be added later.
     for (const gasket of gaskets) {
       const yieldPerSheet = YieldService.calculate(gasket, material);
-      if (yieldPerSheet > 0) {
-        totalFractionalSheets += gasket.quantity / yieldPerSheet;
+      if(yieldPerSheet > 0) {
+          totalSheets += gasket.quantity / yieldPerSheet;
       }
     }
-    
-    // Heuristic for nesting smaller jobs in the remainder of the largest job is not implemented yet.
-    
-    const billedSheets = Math.ceil(totalFractionalSheets);
-    
+
+    const billedSheets = Math.ceil(totalSheets);
     return billedSheets * material.cost;
   }
 }

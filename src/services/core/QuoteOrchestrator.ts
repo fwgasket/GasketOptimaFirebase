@@ -3,28 +3,23 @@ import LaborService from "./LaborService";
 import StockedSheetStrategy from "../billing/StockedSheetStrategy";
 import NonStockedSheetStrategy from "../billing/NonStockedSheetStrategy";
 import RollBillingStrategy from "../billing/RollBillingStrategy";
-import { BillingStrategy } from "../billing/BillingStrategy";
 
 class QuoteOrchestrator {
   calculate(gaskets: Gasket[], material: Material) {
     const totalTime = LaborService.calculate(gaskets);
-    
-    let billingStrategy: BillingStrategy;
+    let totalCost = 0;
 
-    if (material.type === "roll") {
-      billingStrategy = RollBillingStrategy;
-    } else if (material.stocked) {
-      billingStrategy = StockedSheetStrategy;
+    if (material.type === "sheet") {
+      if (material.stocked) {
+        totalCost = StockedSheetStrategy.calculate(gaskets, material);
+      } else {
+        totalCost = NonStockedSheetStrategy.calculate(gaskets, material);
+      }
     } else {
-      billingStrategy = NonStockedSheetStrategy;
+      totalCost = RollBillingStrategy.calculate(gaskets, material);
     }
-    
-    const totalCost = billingStrategy.calculate(gaskets, material);
 
-    return {
-      totalCost,
-      totalTime,
-    };
+    return { totalCost, totalTime };
   }
 }
 
